@@ -17,9 +17,9 @@ namespace Directions
 
 
 
-            string[] add1 = new string[6]; //Track origin
-            string[] add2 = new string[6]; //Track destination
-            int[] min = new int[6];        //Track travel time minutes
+            string[] add1 = new string[(count * (count - 1))]; //Track origin
+            string[] add2 = new string[(count * (count - 1))]; //Track destination
+            int[] min = new int[(count * (count - 1))];        //Track travel time minutes
 
             string[] addressList = new string[200];
 
@@ -59,7 +59,7 @@ namespace Directions
 
             for (int i = 0; i < (count * (count - 1)); i++)
             {
-                Console.Out.WriteLine("= The trip between " + add1[i] + " and " + add2[i] + " will take: " + min[i].ToString() + " minutes.");
+                Console.Out.WriteLine("  The trip between " + add1[i] + " and " + add2[i] + " will take: " + min[i].ToString() + " minutes.");
             }
 
             int[] route = new int[6];
@@ -68,17 +68,18 @@ namespace Directions
 
             for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
             {
-                int x = FindNextRoute(add1, add2, i);
+                int x = FindNextRoute(add1, add2, i, count);
                 route[i] = min[i] + min[x];
-                Console.Out.WriteLine("Route " + i + ": " + add1[i] + " to " + add2[i] + " to " + add2[x] + " takes " + route[i] + " minutes.");
+                Console.Out.WriteLine("-Route " + i + ": " + add1[i] + " to " + add2[i] + " to " + add2[x] + " takes " + route[i] + " minutes.");
             }
 
             int minroute = MinTime(route[0], route[1]); // Compares all the route times and returns lowest value
-            minroute = MinTime(minroute, route[2]);
-            minroute = MinTime(minroute, route[3]);
-            minroute = MinTime(minroute, route[4]);
-            minroute = MinTime(minroute, route[5]);
+            for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
+            {
+                minroute = MinTime(minroute, route[i]);
+            }
 
+            // Find which route matches the shortest time
             for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
             {
                 if (minroute == route[i])
@@ -87,25 +88,17 @@ namespace Directions
 
             Console.ReadKey(); // this is like System("PAUSE");
         }
-        static int FindNextRoute(string[] add1, string[] add2, int i)
-        // This is bullshit logic, I'm hardcording since I know where in the array the values are
-        // The logic should be something on the lines of:
-        // add2[i] SHOULD equal add1[x] but add2[x] should NOT equal add1[i]
+        static int FindNextRoute(string[] add1, string[] add2, int i, int count)
         {
-            if (i == 0)
-                return 4;
-            else if (i == 1)
-                return 2;
-            else if (i == 2)
-                return 5;
-            else if (i == 3)
-                return 0;
-            else if (i == 4)
-                return 3;
-            else if (i == 5)
-                return 1;
-            else
-                return 0;
+            int foundnum = 1000; // set to 1000, crashes program if foundnum doesn't work
+            for (int n = 0; n < (count * (count - 1)); n++)
+            {
+                if ((add2[i] == add1[n]) && (add2[n] != add1[i]))
+                {
+                    foundnum = n;
+                }
+            }
+            return foundnum;
         }
         static int MinTime(int r1, int r2) // Takes two routes and returns the shortest time.
         {
@@ -114,7 +107,6 @@ namespace Directions
             else
                 return r2;
         }
-
         // this function takes an adress for origin and an address destination.
         // it returns the diriving time between the two addresses.        
         static int GetDrivingDistance(string origin, string destination)
