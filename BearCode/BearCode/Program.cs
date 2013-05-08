@@ -9,14 +9,32 @@ namespace Directions
         static void Main(string[] args)
         {
 
-            Console.Out.Write("Enter the origin address: ");
-            string address1 = Console.ReadLine();
-            Console.Out.Write("Enter the destination address: ");
-            string address2 = Console.ReadLine();
+            Console.Out.Write("How many addresses: ");
+            int count = int.Parse(Console.ReadLine());
 
-            int minutes = GetDrivingDistance(address1, address2);
+            string[] addressList = new string[200];
 
-            Console.Out.WriteLine("This trip will take: " + minutes.ToString() + " minutes.");
+            for (int i = 0; i < count; i++)
+            {
+                Console.Out.Write("Enter the origin address: ");
+                addressList[i] = Console.ReadLine();
+            }
+
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                for (int x = i + 1; x < count; x++)
+                {
+                    string a1 = addressList[i];
+                    string a2 = addressList[x];
+                    int minutes = GetDrivingDistance(a1, a2);
+                    Console.Out.WriteLine("The trip between " + a1 + " and " + a2 + " will take: " + minutes.ToString() + " minutes.");
+
+                    minutes = GetDrivingDistance(a2, a1);
+                    Console.Out.WriteLine("The trip between " + a2 + " and " + a1 + " will take: " + minutes.ToString() + " minutes.");
+
+                }
+            }
 
             Console.ReadKey(); // this is like System("PAUSE");
         }
