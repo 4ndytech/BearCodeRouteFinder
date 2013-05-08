@@ -8,14 +8,20 @@ namespace Directions
     {
         static void Main(string[] args)
         {
-            Console.Out.Write("How many addresses: "); //same as cout
-            int count = int.Parse(Console.ReadLine()); // cin << count
+            //Console.Out.Write("How many addresses: "); //same as cout
+            //int count = int.Parse(Console.ReadLine()); // cin << count
 
-            string[] add1 = new string[6];
-            string[] add2 = new string[6];
-            int[] min = new int[6];
+            Console.Out.Write("Three addresses route system :"); //I'm forcing three routes until algorithum is solved
+            Console.Out.WriteLine(); // endl;
+            int count = 3; // Force 3 Adresses
 
-            string[] addressList = new string[200]; // initalize 200 address list
+
+
+            string[] add1 = new string[6]; //Track origin
+            string[] add2 = new string[6]; //Track destination
+            int[] min = new int[6];        //Track travel time minutes
+
+            string[] addressList = new string[200];
 
             for (int i = 0; i < count; i++) // loop for address
             {
@@ -56,47 +62,18 @@ namespace Directions
                 Console.Out.WriteLine("= The trip between " + add1[i] + " and " + add2[i] + " will take: " + min[i].ToString() + " minutes.");
             }
 
-            //DEBUG SECTION - Find out which origin adress is in which array.
-
-            //for (int i = 0; i < (count * (count - 1)); i++) // locate first address
-            //{
-            //    if (addressList[0] == add1[i])
-            //        Console.Out.WriteLine(addressList[0] + " located in in array " + i);
-            //}
-
-            //for (int i = 0; i < (count * (count - 1)); i++) // locate second address
-            //{
-            //    if (addressList[1] == add1[i])
-            //        Console.Out.WriteLine(addressList[1] + " located in array " + i);
-            //}
-
-            //for (int i = 0; i < (count * (count - 1)); i++) // locate third address
-            //{
-            //    if (addressList[2] == add1[i])
-            //        Console.Out.WriteLine(addressList[2] + " located in array " + i);
-            //}
-
             int[] route = new int[6];
 
-            route[0] = min[0] + min[4];
-            Console.Out.WriteLine("Route 0 : " + add1[0] + " to " + add2[0] + " to " + add2[4] + " takes " + route[0] + " minutes.");
+            // We need to find out how to create this as a loop.
 
-            route[1] = min[1] + min[2];
-            Console.Out.WriteLine("Route 1 : " + add1[1] + " to " + add2[1] + " to " + add2[2] + " takes " + route[1] + " minutes.");
+            for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
+            {
+                int x = FindNextRoute(add1, add2, i);
+                route[i] = min[i] + min[x];
+                Console.Out.WriteLine("Route " + i + ": " + add1[i] + " to " + add2[i] + " to " + add2[x] + " takes " + route[i] + " minutes.");
+            }
 
-            route[2] = min[2] + min[5];
-            Console.Out.WriteLine("Route 2 : " + add1[2] + " to " + add2[2] + " to " + add2[5] + " takes " + route[2] + " minutes.");
-
-            route[3] = min[3] + min[0];
-            Console.Out.WriteLine("Route 3 : " + add1[3] + " to " + add2[3] + " to " + add2[0] + " takes " + route[3] + " minutes.");
-
-            route[4] = min[4] + min[3];
-            Console.Out.WriteLine("Route 4 : " + add1[4] + " to " + add2[4] + " to " + add2[3] + " takes " + route[4] + " minutes.");
-
-            route[5] = min[5] + min[1];
-            Console.Out.WriteLine("Route 5 : " + add1[5] + " to " + add2[5] + " to " + add2[1] + " takes " + route[5] + " minutes.");
-
-            int minroute = MinTime(route[0], route[1]);
+            int minroute = MinTime(route[0], route[1]); // Compares all the route times and returns lowest value
             minroute = MinTime(minroute, route[2]);
             minroute = MinTime(minroute, route[3]);
             minroute = MinTime(minroute, route[4]);
@@ -110,11 +87,26 @@ namespace Directions
 
             Console.ReadKey(); // this is like System("PAUSE");
         }
-
-
-        // this function takes an adress for origin and an address destination.
-        // it returns the diriving time between the two addresses.
-
+        static int FindNextRoute(string[] add1, string[] add2, int i)
+        // This is bullshit logic, I'm hardcording since I know where in the array the values are
+        // The logic should be something on the lines of:
+        // add2[i] SHOULD equal add1[x] but add2[x] should NOT equal add1[i]
+        {
+            if (i == 0)
+                return 4;
+            else if (i == 1)
+                return 2;
+            else if (i == 2)
+                return 5;
+            else if (i == 3)
+                return 0;
+            else if (i == 4)
+                return 3;
+            else if (i == 5)
+                return 1;
+            else
+                return 0;
+        }
         static int MinTime(int r1, int r2) // Takes two routes and returns the shortest time.
         {
             if (r1 < r2)
@@ -123,6 +115,8 @@ namespace Directions
                 return r2;
         }
 
+        // this function takes an adress for origin and an address destination.
+        // it returns the diriving time between the two addresses.        
         static int GetDrivingDistance(string origin, string destination)
         {
             // we need to call google with the two address provided
