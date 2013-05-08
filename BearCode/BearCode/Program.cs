@@ -8,90 +8,134 @@ namespace Directions
     {
         static void Main(string[] args)
         {
-            //Console.Out.Write("How many addresses: "); //same as cout
-            //int count = int.Parse(Console.ReadLine()); // cin << count
+            // By default this program calculates three address routes.
+            // It cannot calculate more until this program is improved.
 
-            Console.Out.Write("Three addresses route system :"); //I'm forcing three routes until algorithum is solved
-            Console.Out.WriteLine(); // endl;
+            int debug = 0; // Defualt 0 - Debug off
+ 
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+	        Console.ForegroundColor = ConsoleColor.White;
+            Console.Out.WriteLine("BEARCODE Fastest Route Finder - CIS 3100 GROUP PROJECT (SPRING 2013)");
+            Console.ResetColor();
+            Console.Out.WriteLine(); // endl; 
+
             int count = 3; // Force 3 Adresses
 
+            // Following code allows user to define number of addresses in route - PROGRAM WILL NOT WORK
+            //Console.Out.Write("How many addresses: "); //same as cout
+            //int count = int.Parse(Console.ReadLine()); // cin << count
+            
+            int count2 = (count * (count - 1)); // n*(n-1) is used alot, so we declare a variable for it
 
+            string[] addressList = new string[count2];
 
-            string[] add1 = new string[(count * (count - 1))]; //Track origin
-            string[] add2 = new string[(count * (count - 1))]; //Track destination
-            int[] min = new int[(count * (count - 1))];        //Track travel time minutes
-
-            string[] addressList = new string[200];
-
-            for (int i = 0; i < count; i++) // loop for address
+            for (int i = 0; i < count; i++) // loop for address input
             {
-                Console.Out.Write("Enter the origin address: ");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Out.Write("Enter Address "+ (i + 1) +" of 3 : ");
+                Console.ResetColor();
                 addressList[i] = Console.ReadLine();
             }
 
-            int y = 0; // declare y because I have no idea what I'm doing
+            Console.Out.WriteLine(); // endl
+
+            string[] add1 = new string[count2]; //Record Address 1
+            string[] add2 = new string[count2]; //Record Address 2
+            int[] min = new int[count2];        //Record travel time minutes
+            int y = 0; // Y is counter for array number to store information
+
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Out.WriteLine("Calculating all possible routes and travel times...");
+            Console.Out.WriteLine();
+            Console.ResetColor();
 
             for (int i = 0; i < count - 1; i++)
             {
-                for (int x = i + 1; x < count; x++)
+                for (int x = i + 1; x < count; x++) // Asks google directions from A to B
                 {
                     string a1 = addressList[i];
                     string a2 = addressList[x];
-                    int minutes = GetDrivingDistance(a1, a2);
-                    //Console.Out.WriteLine("The trip between " + a1 + " and " + a2 + " will take: " + minutes.ToString() + " minutes.");
 
-                    add1[y] = a1; //record origin
-                    add2[y] = a2; //record destination
-                    min[y] = minutes; // record amount of time it takes to get there
+                    int minutes = GetDrivingDistance(a1, a2); // Google Directions From A to B                   
+                    RecordList(a1, a2, minutes, ref y, add1, add2, min); // Record in parallel arrays
 
-                    y++;
-
-                    minutes = GetDrivingDistance(a2, a1);
-                    //Console.Out.WriteLine("The trip between " + a2 + " and " + a1 + " will take: " + minutes.ToString() + " minutes.");
-
-                    add1[y] = a2; //record origin
-                    add2[y] = a1; //record destination
-                    min[y] = minutes; // record amount of time it takes to get there
-
-                    y++;
+                    minutes = GetDrivingDistance(a2, a1); // Google Directions from B to A
+                    RecordList(a2, a1, minutes, ref y, add1, add2, min); // Record in parallel arrays
                 }
             }
 
-            for (int i = 0; i < (count * (count - 1)); i++)
+            if (debug == 1) // Default off, shows Route times for all possible two destination points
             {
-                Console.Out.WriteLine("  The trip between " + add1[i] + " and " + add2[i] + " will take: " + min[i].ToString() + " minutes.");
+                for (int i = 0; i < count2; i++)
+                {
+                    Console.Out.WriteLine("The trip between " + add1[i] + " and " + add2[i] + " will take: " + min[i].ToString() + " minutes.");
+                }
             }
 
-            int[] route = new int[6];
+            int[] route = new int[count2];       //Route = Adddress 1&2 time + Address 2&3 time
+            string[] add3 = new string[count2];  //Track route Address 3
 
-            // We need to find out how to create this as a loop.
-
-            for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
+            for (int i = 0; i < count2; i++) // match shortest route time to Route
             {
-                int x = FindNextRoute(add1, add2, i, count);
-                route[i] = min[i] + min[x];
-                Console.Out.WriteLine("-Route " + i + ": " + add1[i] + " to " + add2[i] + " to " + add2[x] + " takes " + route[i] + " minutes.");
+                int x = FindNextRoute(add1, add2, i, count2);
+                route[i] = min[i] + min[x];  // adds two two destination route times together to create a three rotue time
+                add3[i] = add2[x];           // Assigns Address 3 the address located in address 2[x]
             }
 
-            int minroute = MinTime(route[0], route[1]); // Compares all the route times and returns lowest value
-            for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
+            int minroute = FindMinTime(route[0], route[1]); // Compares all the route times and returns lowest value
+            
+            for (int i = 0; i < count2; i++) // match shortest route time to Route
             {
-                minroute = MinTime(minroute, route[i]);
+                minroute = FindMinTime(minroute, route[i]);
             }
 
-            // Find which route matches the shortest time
-            for (int i = 0; i < (count * (count - 1)); i++) // match shortest route time to Route
+            for (int i = 0; i < count2; i++) // Console output all Routes to User
+            {
+                if (minroute == route[i]) // If shortest route, Make it Green
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Out.WriteLine("- " + (i + 1) + ": " + add1[i] + " to " + add2[i] + " to " + add3[i]);
+                    Console.Out.WriteLine("     Travel Time : " + route[i] + " minutes." + "\n");
+                    Console.ResetColor();
+                }
+                else // Make all the other routes Dark Green
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.Out.WriteLine("  " + (i + 1) + ": " + add1[i] + " to " + add2[i] + " to " + add3[i] );
+                    Console.Out.WriteLine("     Travel Time : " + route[i] + " minutes." + "\n");
+                    Console.ResetColor();
+                }
+            }
+
+            // Outputs which routes matches the shortest time
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.Out.WriteLine("The Fastest Route is: ");
+            Console.Out.WriteLine();
+            Console.ResetColor();
+            for (int i = 0; i < count2; i++) 
             {
                 if (minroute == route[i])
-                    Console.Out.WriteLine("Route " + i + " is the fastest.");
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Out.WriteLine("Route " + (i + 1) + " " + add1[i] + " to " + add2[i] + " to " + add3[i]);
+                    Console.Out.WriteLine("will take you " + route[i] + " minutes to travel.");
+                    Console.ResetColor();
+                }
             }
 
             Console.ReadKey(); // this is like System("PAUSE");
         }
-        static int FindNextRoute(string[] add1, string[] add2, int i, int count)
+        static void RecordList(string a1, string a2, int minutes, ref int y,string[] add1,string[] add2,int[] min)
         {
-            int foundnum = 1000; // set to 1000, crashes program if foundnum doesn't work
-            for (int n = 0; n < (count * (count - 1)); n++)
+            add1[y] = a1; //record Address 1 to array
+            add2[y] = a2; //record Address 2 to array
+            min[y] = minutes; // record travel time of Address 1 to Address 2 route to array 
+            y++; // Increment Array counter
+        }
+        static int FindNextRoute(string[] add1, string[] add2, int i, int count2)
+        {
+            int foundnum = 0; // 
+            for (int n = 0; n < count2; n++)
             {
                 if ((add2[i] == add1[n]) && (add2[n] != add1[i]))
                 {
@@ -100,7 +144,7 @@ namespace Directions
             }
             return foundnum;
         }
-        static int MinTime(int r1, int r2) // Takes two routes and returns the shortest time.
+        static int FindMinTime(int r1, int r2) // Takes two routes and returns the shortest time.
         {
             if (r1 < r2)
                 return r1;
