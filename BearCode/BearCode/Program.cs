@@ -96,9 +96,9 @@ namespace Directions
                 else // Make all the other routes Dark Green
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-            Console.Out.WriteLine("  " + (i + 1) + ": " + add1[i] + " to " + add2[i] + " to " + add3[i]);
-            Console.Out.WriteLine("     Travel Time : " + route[i] + " minutes." + "\n");
-            Console.ResetColor();
+                Console.Out.WriteLine("  " + (i + 1) + ": " + add1[i] + " to " + add2[i] + " to " + add3[i]);
+                Console.Out.WriteLine("     Travel Time : " + route[i] + " minutes." + "\n");
+                Console.ResetColor();
             }
 
             // Outputs which routes matches the shortest time
