@@ -7,3 +7,4 @@ C:\Users\4ndy\Documents\GitHub\BearCodeRouteFinder\BearCode\BearCode\obj\x86\Deb
 C:\Users\4ndy\Documents\GitHub\BearCodeRouteFinder\BearCode\BearCode\obj\x86\Debug\BearCode.pdb
 C:\Users\4ndy\Documents\GitHub\BearCodeRouteFinder\BearCode\BearCode\bin\Debug\BearCode.exe
 C:\Users\4ndy\Documents\GitHub\BearCodeRouteFinder\BearCode\BearCode\bin\Debug\BearCode.pdb
+C:\Users\4ndy\Documents\GitHub\BearCodeRouteFinder\BearCode\BearCode\obj\x86\Debug\BearCode.csprojResolveAssemblyReference.cache
